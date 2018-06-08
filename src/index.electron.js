@@ -27,7 +27,7 @@ import createPlugin from 'bugsnag-react'
  * @param Component React component that should be rendered
  */
 const renderComponent = Component => {
-  render(
+  hydrate(
     <AppContainer>
       <Router>
         <Component/>

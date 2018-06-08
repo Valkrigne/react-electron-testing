@@ -3,7 +3,7 @@ import { withRouter }       from 'react-router-dom'
 
 // import RedirectStore   from './stores/RedirectStore'
 // import RedirectActions from './actions/RedirectActions'
-import loadFontAwesome from './scripts/font-awesome'
+// import loadFontAwesome from './scripts/font-awesome'
 
 // import AppWrapper from './components/AppWrapper'
 // import '../assets/stylesheets/application.scss'
@@ -20,7 +20,7 @@ export default class App extends Component {
 
   render() {
     return (
-      <div />
+      <div>THINGS</div>
     )
   }
 }
