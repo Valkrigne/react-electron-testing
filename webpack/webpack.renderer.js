@@ -50,6 +50,7 @@ export default merge.smart(baseConfig, {
     'react-hot-loader/patch',
     `webpack-dev-server/client?http://localhost:${port}/`,
     'webpack/hot/only-dev-server',
+    path.join(__dirname, '../src/assets/vendor'),
     path.join(__dirname, '../src/index.js')
   ],
 
@@ -57,7 +58,14 @@ export default merge.smart(baseConfig, {
     publicPath: `http://localhost:${port}/dist/`,
     filename: 'renderer.dev.js'
   },
-
+  resolve: {
+      extensions: ['.js'],
+      modules: [
+          path.join(__dirname, '../node_modules'),
+          path.join(__dirname, '../src'),
+          path.join(__dirname, '../src/shared')
+      ]
+    },
   module: {
     rules: [
       {
@@ -72,6 +80,7 @@ export default merge.smart(baseConfig, {
               // renderer process. The 'transform-*' plugins must be included
               // before react-hot-loader/babel
               'transform-class-properties',
+              "transform-decorators-legacy",
               'transform-es2015-classes',
               'react-hot-loader/babel'
             ]
@@ -79,129 +88,30 @@ export default merge.smart(baseConfig, {
         }
       },
       {
-        test: /\.global\.css$/,
-        use: [
-          {
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true
-            }
-          }
-        ]
-      },
+          test: /\.scss$/,
+          exclude: /node_modules/,
+          use: ExtractTextPlugin.extract({
+            use: [
+              { loader: "css-loader", options: { minimize: true } },
+              { loader: "postcss-loader" },
+              { loader: "sass-loader" }
+            ]
+          })
+        },
       {
-        test: /^((?!\.global).)*\.css$/,
-        use: [
-          {
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              sourceMap: true,
-              importLoaders: 1,
-              localIdentName: '[name]__[local]__[hash:base64:5]'
-            }
-          }
-        ]
-      },
-      // SASS support - compile all .global.scss files and pipe it to style.css
-      {
-        test: /\.global\.(scss|sass)$/,
-        use: [
-          {
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true
-            }
-          },
-          {
-            loader: 'sass-loader'
-          }
-        ]
-      },
-      // SASS support - compile all other .scss files and pipe it to style.css
-      {
-        test: /^((?!\.global).)*\.(scss|sass)$/,
-        use: [
-          {
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              sourceMap: true,
-              importLoaders: 1,
-              localIdentName: '[name]__[local]__[hash:base64:5]'
-            }
-          },
-          {
-            loader: 'sass-loader'
-          }
-        ]
-      },
-      // WOFF Font
-      {
-        test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'application/font-woff'
-          }
-        }
-      },
-      // WOFF2 Font
-      {
-        test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'application/font-woff'
-          }
-        }
-      },
-      // TTF Font
-      {
-        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'application/octet-stream'
-          }
-        }
-      },
-      // EOT Font
-      {
-        test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        use: 'file-loader'
-      },
-      // SVG Font
-      {
-        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'image/svg+xml'
-          }
-        }
-      },
-      // Common Image Formats
-      {
-        test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
-        use: 'url-loader'
-      }
+          test: /\.(png|jpg|gif|svg)$/,
+          exclude: [/node_modules/, /fonts/],
+          loader: 'url-loader?limit=10000&name=images/[name].[ext]'
+        },
+        {
+          test: /\.(eot|svg|ttf|woff|woff2|otf)$/,
+          exclude: [/node_modules/, /images/],
+          loader: 'file-loader?name=fonts/[name].[ext]'
+        },
+  			{
+  			  test: /\.ico?$/,
+  				loader: 'file-loader?name=[name].[ext]'
+  			}
     ]
   },
 
@@ -241,8 +151,8 @@ export default merge.smart(baseConfig, {
     }),
 
     new ExtractTextPlugin({
-      filename: '[name].css'
-    })
+      filename: "main.css"
+    }),
   ],
 
   node: {

@@ -6,6 +6,9 @@ import { AppContainer } from 'react-hot-loader';
 import App from './shared/App';
 import bugsnag from 'bugsnag-js'
 import createPlugin from 'bugsnag-react'
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 // const key = window.env.BUGSNAG_CLIENT_KEY
 // const bugsnagClient = bugsnag({

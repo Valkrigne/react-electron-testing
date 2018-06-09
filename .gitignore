@@ -48,5 +48,9 @@ dll
 main.js
 main.js.map
 
+
+/src/shared
+/src/assets
+
 .idea
 npm-debug.log.*
